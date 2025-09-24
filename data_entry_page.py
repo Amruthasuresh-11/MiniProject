@@ -21,34 +21,49 @@ def data_entry():
     mba_p = st.number_input("MBA Percentage", 0.0, 100.0)
 
     if st.button("Predict"):
-        new_data = pd.DataFrame({
-            'gender': [0 if gender == "Male" else 1],
-            'ssc_p': [ssc_p],
-            'ssc_b': [1 if ssc_b == "Central" else 0],
-            'hsc_p': [hsc_p],
-            'hsc_b': [1 if hsc_b == "Central" else 0],
-            'hsc_s': [1 if hsc_s == "Science" else (0 if hsc_s == "Commerce" else 2)],
-            'degree_p': [degree_p],
-            'degree_t': [1 if degree_t == "Sci&Tech" else (0 if degree_t == "Comm&Mgmt" else 2)],
-            'workex': [1 if workex == "Yes" else 0],
-            'etest_p': [etest_p],
-            'specialisation': [1 if specialisation == "Mkt&Fin" else 0],
-            'mba_p': [mba_p]
-        })
+        # Validation: Ensure all percentages are within 0 to 100
+        invalid_inputs = []
+        if not (0 <= ssc_p <= 100):
+            invalid_inputs.append("Secondary Education Percentage (SSC %)")
+        if not (0 <= hsc_p <= 100):
+            invalid_inputs.append("Higher Secondary Education Percentage (HSC %)")
+        if not (0 <= degree_p <= 100):
+            invalid_inputs.append("Degree Percentage")
+        if not (0 <= etest_p <= 100):
+            invalid_inputs.append("E-Test Percentage")
+        if not (0 <= mba_p <= 100):
+            invalid_inputs.append("MBA Percentage")
 
-        model = joblib.load('placement_prediction_model.pkl')
-        result = model.predict(new_data)[0]
-        proba = model.predict_proba(new_data)[0][1]
+        if invalid_inputs:
+            st.error(f"⚠️ Please enter valid percentage values (0 to 100) for: {', '.join(invalid_inputs)}")
+        else:
+            new_data = pd.DataFrame({
+                'gender': [0 if gender == "Male" else 1],
+                'ssc_p': [ssc_p],
+                'ssc_b': [1 if ssc_b == "Central" else 0],
+                'hsc_p': [hsc_p],
+                'hsc_b': [1 if hsc_b == "Central" else 0],
+                'hsc_s': [1 if hsc_s == "Science" else (0 if hsc_s == "Commerce" else 2)],
+                'degree_p': [degree_p],
+                'degree_t': [1 if degree_t == "Sci&Tech" else (0 if degree_t == "Comm&Mgmt" else 2)],
+                'workex': [1 if workex == "Yes" else 0],
+                'etest_p': [etest_p],
+                'specialisation': [1 if specialisation == "Mkt&Fin" else 0],
+                'mba_p': [mba_p]
+            })
 
-        st.session_state['student_name'] = student_name
-        st.session_state['result'] = result
-        st.session_state['prob'] = proba
+            model = joblib.load('placement_prediction_model.pkl')
+            result = model.predict(new_data)[0]
+            proba = model.predict_proba(new_data)[0][1]
 
-        st.success("Data submitted! Redirecting to Result Page...")
+            st.session_state['student_name'] = student_name
+            st.session_state['result'] = result
+            st.session_state['prob'] = proba
 
-        # Redirect automatically
-        st.session_state["page"] = "Result"
-        st.rerun()  # reload app to navigate
+            st.success("✅ Data submitted! Redirecting to Result Page...")
+
+            st.session_state["page"] = "Result"
+            st.rerun()
 
 if __name__ == '__main__':
     data_entry()
