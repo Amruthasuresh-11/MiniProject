@@ -20,6 +20,8 @@ def data_entry():
     specialisation = st.selectbox("Specialisation", ["Mkt&HR", "Mkt&Fin"])
     mba_p = st.number_input("MBA Percentage", 0.0, 100.0)
 
+    
+
     if st.button("Predict"):
         # Validation: Ensure all percentages are within 0 to 100
         invalid_inputs = []
