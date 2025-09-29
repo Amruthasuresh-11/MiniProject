@@ -1,16 +1,21 @@
 import streamlit as st
 
 def home():
-    st.title("🏫 Campus Placement Prediction System")
-
+    st.title("🎓 Campus Placement Prediction Using Machine Learning")
     st.write("""
-        Welcome to the Campus Placement Prediction System.  
-        This system predicts whether a student will be placed based on academic and other personal details.
+    Welcome to the **Campus Placement Prediction System**!  
+    Check your placement chances based on academic details and performance.  
+    You can also **try an aptitude test** to know your readiness or 
+    proceed to the **placement prediction** page.
     """)
 
-    if st.button("Get Started"):
-      st.session_state["page"] = "Data Entry"  # use session_state instead of query params
-      st.rerun()  # reload app to navigate
- 
-if __name__ == '__main__':
-    home()
+    st.markdown("---")
+    col1, col2 = st.columns(2)
+
+    with col1:
+        if st.button("📝 Try Aptitude Test", key="home_apt"):
+            st.session_state["page"] = "Aptitude Test"
+
+    with col2:
+        if st.button("📊 Placement Prediction", key="home_data"):
+            st.session_state["page"] = "Data Entry"
